@@ -3,35 +3,43 @@ var express = require("express")
 	, app = express()
 	;
 
+app.configure(function () {
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);  
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+});
+
 app.get('/curlRequest', function (req, res) {
 	
-	var reqURL = ''
+	var reqURL = req.query.url
 		, options = { url: reqURL, include: true }
 		;
 
 	curl.request(options, function (err, parts) {
-	    	parts = parts.split('\r\n');
-	    	var data = parts.pop()
-	      		, head = parts.pop()
-	      		;
+  	parts = parts.split('\r\n');
+  	var data = parts.pop();
 	      	
-	      	res.header('Content-Type', 'application/json');
-  		res.header('Charset', 'utf-8')
-	      	res.send( 'resData(' + data + ');' );
-
-	      	/*
-		*Sample Request would look like:
-		* $.ajax({
-               *        dataType: 'jsonp',                    
-               *        jsonpCallback: 'resData',
-               *        url: 'http://localhost:3000/curlRequest',                    
-               *        success: function(data) {
-               *            console.log(data);               
-               *        }
-               * });
-	      	*/
+	  res.header('Content-Type', 'application/json');
+		res.header('Charset', 'utf-8');
+	  res.send( 'resData(' + data + ');' );
+		
+		/*
+		 *Sample Request would look like:
+		 *	$.ajax({
+		 *			url: 'http://localhost:3000/curlRequest',
+		 *			data: {"url" : "yourURL"},
+		 *			dataType: 'jsonp',
+		 *			jsonpCallback: 'resData',
+		 *			success:function(data){ console.log(data); }
+		 *	});
+		 */
 	});
 
 });
 
-app.listen(3000); 
+app.get('/', function(req, res){
+	res.jsonp('Connected');
+});
+
+app.listen(3000);
