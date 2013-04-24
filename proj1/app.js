@@ -24,7 +24,7 @@ app.get('/curlRequest', function (req, res) {
 		* $.ajax({
                *        dataType: 'jsonp',                    
                *        jsonpCallback: 'resData',
-               *        url: '/curlRequest',                    
+               *        url: 'http://localhost:3000/curlRequest',                    
                *        success: function(data) {
                *            console.log(data);               
                *        }
